@@ -1,6 +1,7 @@
 package com.algaworks.algashop.billing.domain.model.invoice;
 
 import com.algaworks.algashop.billing.domain.model.FieldValidations;
+import jakarta.persistence.Embedded;
 import lombok.*;
 
 import java.util.Objects;
@@ -14,6 +15,8 @@ public class Payer {
     private String document;
     private String phone;
     private String email;
+
+    @Embedded
     private Address address;
 
     @Builder
