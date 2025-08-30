@@ -1,8 +1,12 @@
 package com.algaworks.algashop.billing.domain.model.invoice;
 
+import com.algaworks.algashop.billing.domain.model.DomainException;
 import com.algaworks.algashop.billing.domain.model.IdGenerator;
-import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToOne;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,29 +22,36 @@ public class PaymentSettings {
     private UUID id;
     private UUID creditCardId;
     private String gatewayCode;
+
+    @Enumerated(EnumType.STRING)
     private PaymentMethod method;
 
-    public static PaymentSettings brandNew(PaymentMethod method, UUID creditCardId) {
+    @OneToOne(mappedBy = "paymentSettings")
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PACKAGE)
+    private Invoice invoice;
+
+    static PaymentSettings brandNew(PaymentMethod method, UUID creditCardId) {
         Objects.requireNonNull(method);
-        if (method.equals(PaymentMethod.CREDIT_CARD)){
-            Objects.requireNonNull(creditCardId, "Credit card ID is required when payment method is CREDIT_CARD");
+        if (method.equals(PaymentMethod.CREDIT_CARD)) {
+            Objects.requireNonNull(creditCardId);
         }
         return new PaymentSettings(
                 IdGenerator.generateTimeBasedUUID(),
                 creditCardId,
                 null,
-                method
+                method,
+                null
         );
     }
 
     void assignGatewayCode(String gatewayCode) {
         if (StringUtils.isBlank(gatewayCode)) {
-            throw new IllegalArgumentException("Gateway code cannot be empty");
+            throw new IllegalArgumentException();
         }
-        if(this.getGatewayCode() != null) {
-            throw new IllegalStateException("Gateway code is already assigned");
+        if (this.getGatewayCode() != null) {
+            throw new DomainException("Gateway code already assigned");
         }
-
         setGatewayCode(gatewayCode);
     }
 }

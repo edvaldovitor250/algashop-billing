@@ -1,6 +1,7 @@
 package com.algaworks.algashop.billing.domain.model.invoice;
 
 import com.algaworks.algashop.billing.domain.model.FieldValidations;
+import jakarta.persistence.Entity;
 import lombok.*;
 
 @Getter
