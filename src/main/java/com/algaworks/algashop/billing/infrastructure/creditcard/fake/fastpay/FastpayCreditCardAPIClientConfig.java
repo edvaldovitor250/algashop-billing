@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fake.fastpay;
 
 import com.algaworks.algashop.billing.infrastructure.payment.AlgaShopPaymentPropreties;
 import org.springframework.context.annotation.Bean;

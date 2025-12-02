@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fake.fastpay;
 
 import lombok.Builder;
 import lombok.Data;

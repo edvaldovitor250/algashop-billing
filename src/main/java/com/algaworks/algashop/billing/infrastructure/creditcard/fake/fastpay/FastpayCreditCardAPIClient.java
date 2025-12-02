@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fake.fastpay;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
