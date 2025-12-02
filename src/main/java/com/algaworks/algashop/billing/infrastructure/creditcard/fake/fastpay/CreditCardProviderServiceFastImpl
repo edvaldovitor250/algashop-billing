@@ -1,49 +1,50 @@
-package com.algaworks.algashop.billing.infrastructure.creditcard.fake.fastpay;
-
-import java.util.UUID;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
 
 import com.algaworks.algashop.billing.domain.model.creditcard.CreditCardProviderService;
 import com.algaworks.algashop.billing.domain.model.creditcard.LimitedCreditCard;
-import com.algaworks.algashop.billing.domain.model.creditcard.Options;
-import com.algaworks.algashop.billing.infrastructure.payment.AlgaShopPaymentPropreties;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @ConditionalOnProperty(name = "algashop.integrations.payment.provider", havingValue = "FASTPAY")
-public class CreditCardProviderServiceFastImpl implements CreditCardProviderService {
+@RequiredArgsConstructor
+public class CreditCardProviderServiceFastpayImpl implements CreditCardProviderService {
 
-    private final AlgaShopPaymentPropreties.FastpayProperties fastpayProperties;
-
-    public CreditCardProviderServiceFastImpl(AlgaShopPaymentPropreties.FastpayProperties fastpayProperties) {
-        this.fastpayProperties = fastpayProperties;
-    }
+    private final FastpayCreditCardAPIClient fastpayCreditCardAPIClient;
 
     @Override
     public LimitedCreditCard register(UUID customerId, String tokenizedCard) {
-        // Simulate interaction with Fastpay API using fastpayProperties
-        // For demonstration, returning a dummy LimitedCreditCard
-        return LimitedCreditCard.builder()
-                .gatewayCode("fastpay-" + customerId)
-                .lastNumbers(tokenizedCard.substring(tokenizedCard.length() - 4))
-                .brand("VISA")
-                .expMonth(12)
-                .expYear(2026)
+        FastpayCreditCardInput input = FastpayCreditCardInput.builder()
+                .tokenizedCard(tokenizedCard)
+                .customerCode(customerId.toString())
                 .build();
+
+        FastpayCreditCardResponse response = fastpayCreditCardAPIClient.create(input);
+        return toLimitedCreditCard(response);
     }
 
     @Override
-    public Options<LimitedCreditCard> findById(String providerCreditCardCode) {
-        // Simulate fetching card details from Fastpay API
-        // For demonstration, returning an empty Options
-        return Options.empty();
+    public Optional<LimitedCreditCard> findById(String gatewayCode) {
+        FastpayCreditCardResponse response = fastpayCreditCardAPIClient.findById(gatewayCode);
+        return Optional.of(toLimitedCreditCard(response));
     }
 
     @Override
     public void delete(String gatewayCode) {
-        // Simulate deletion of card from Fastpay API
-        // No return value needed
+        fastpayCreditCardAPIClient.delete(gatewayCode);
+    }
+
+    private LimitedCreditCard toLimitedCreditCard(FastpayCreditCardResponse response) {
+        return LimitedCreditCard.builder()
+                .brand(response.getBrand())
+                .expYear(response.getExpYear())
+                .expMonth(response.getExpMonth())
+                .lastNumbers(response.getLastNumbers())
+                .gatewayCode(response.getId())
+                .build();
     }
 }
