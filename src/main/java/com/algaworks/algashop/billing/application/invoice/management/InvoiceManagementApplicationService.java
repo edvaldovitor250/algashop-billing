@@ -106,6 +106,12 @@ public class InvoiceManagementApplicationService {
                 .build();
     }
 
+    public void updatePaymentStatus(UUID invoiceId, PaymentStatus paymentStatus) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new ExpressionException("Invoice not found"));
+        invoice.updatePaymentStatus(paymentStatus);
+        invoiceRepository.saveAndFlush(invoice);
+    }
+
     private void verifyCreditCardId(UUID creditCardId) {
         if (creditCardId != null && !creditCardRepository.existsById(creditCardId)) {
             throw new CreditCardNotFoundException();
