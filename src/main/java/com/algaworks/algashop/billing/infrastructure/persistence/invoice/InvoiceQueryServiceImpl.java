@@ -2,7 +2,7 @@ package com.algaworks.algashop.billing.infrastructure.persistence.invoice;
 
 import com.algaworks.algashop.billing.application.invoice.query.InvoiceOutput;
 import com.algaworks.algashop.billing.application.invoice.query.InvoiceQueryService;
-import com.algaworks.algashop.billing.application.invoice.utility.Mapper;
+import com.algaworks.algashop.billing.application.utility.Mapper;
 import com.algaworks.algashop.billing.domain.model.invoice.Invoice;
 import com.algaworks.algashop.billing.domain.model.invoice.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
