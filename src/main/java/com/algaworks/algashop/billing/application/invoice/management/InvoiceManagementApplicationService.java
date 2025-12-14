@@ -30,7 +30,7 @@ public class InvoiceManagementApplicationService {
     @Transactional
     public UUID generate(GenerateInvoiceInput input) {
         PaymentSettingsInput paymentSettings = input.getPaymentSettings();
-        verifyCreditCardId(paymentSettings.getCreditCardId());
+        verifyCreditCard(paymentSettings, input.getCustomerId());
 
         Payer payer = convertToPayer(input.getPayer());
         Set<LineItem> items = convertToLineItems(input.getItems());
@@ -113,9 +113,17 @@ public class InvoiceManagementApplicationService {
         invoiceRepository.saveAndFlush(invoice);
     }
 
-    private void verifyCreditCardId(UUID creditCardId) {
-        if (creditCardId != null && !creditCardRepository.existsById(creditCardId)) {
-            throw new CreditCardNotFoundException();
+    private void verifyCreditCard(PaymentSettingsInput paymentSettings, UUID customerId) {
+        if (paymentSettings.getMethod().equals(PaymentMethod.CREDIT_CARD)) {
+            UUID creditCardId = paymentSettings.getCreditCardId();
+
+            if (creditCardId == null) {
+                throw new IllegalArgumentException("creditCardId is required when payment method is CREDIT_CARD");
+            }
+
+            if (!creditCardRepository.existsByIdAndCustomerId(creditCardId, customerId)) {
+                throw new CreditCardNotFoundException(String.format("Credit card %s not found", creditCardId));
+            }
         }
     }
 }
