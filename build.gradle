@@ -95,3 +95,12 @@ tasks.register('integrationTest', Test) {
 		excludeTestsMatching "*Test"
 	}
 }
+
+tasks.register('dockerBuild', Exec) {
+	description = 'Build Docker image (algashop/billing:dev).'
+	group = 'docker'
+
+	dependsOn(tasks.named('bootJar'))
+
+	commandLine 'docker', 'build', '.', '-t', 'algashop/billing:dev'
+}

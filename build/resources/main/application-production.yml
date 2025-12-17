@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${BILLING_DATASOURCE_URL}
+    username: ${BILLING_DATASOURCE_USERNAME}
+    password: ${BILLING_DATASOURCE_PASSWORD}
+  jpa:
+    show-sql: false
+
+algashop:
+  integrations:
+    payment:
+      fastpay:
+        hostname: ${FASTPAY_HOSTNAME}
+        private-token: ${FASTPAY_PRIVATE_TOKEN}
+        webhook-url: ${FASTPAY_WEBHOOK_URL}
